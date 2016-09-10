@@ -16,8 +16,14 @@ namespace cv{using std::vector;}
 class lenz
 {
 private:
-    long lineEndTypeThresh = 29; //crisp value to classify line;
+    ///settings
+    long lineEndTypeThresh = 22; //crisp value to classify line; Higher than or equal this value is not narrow.
+    long cornerIgnoreThresh = 70;
+    const float resizeAt = 1;       //resize for testing;
+    long radius = 20;
+    long noise = 100;
 
+    /// image variables for debugging
     Mat imgOrig;
     Mat imgGray;
     Mat imgBinary;
@@ -29,11 +35,13 @@ private:
     Mat imgFoundEnds;
     Mat imgClassifiedEnds;
 
+
+
     std::vector< Mat > imgEndAreas;
     std::vector< cv::Point > skelPoints;
 	std::vector< cv::Point > endPoints;
 
-
+    std::string fileName;
     //std::string defaultPath = "C:\\Users\\jherenz\\OneDrive\\Thesis\\Project\\lei\\bin\\Debug\\Results\\";
     //std::string filename = "a.jpeg";
 
@@ -41,6 +49,7 @@ public:
     ///constructors
     lenz(std::string const &source, std::string const &result);
 
+    ///Main Functions
     void setLineEndTypeThresh(long const &num);
 
     void setOrig(std::string const &source, std::string const &result);
@@ -67,14 +76,20 @@ public:
     Mat getEndPointsImage();
     std::vector<cv::Point> getEndPoints();
 
-    void setClassifyLineEnds(Mat const &img, std::vector< cv::Point > const &p);
+    void setClassifyLineEnds(std::vector< cv::Point > const &p);
     Mat getClassifiedEnds();
 
+
+    ///Sub-Functions
+    Mat filter(Mat const &img, float kernel_length);
     Rect squareAroundCentroid(cv::Point p, int size, int width, int height) ;
     std::string to_string(long const &n);
     Mat getCircleROI(Mat const &img, cv::Point const &p);
 
+
     void saveImg(std::string const &path, Mat const &img);
+    void setFileName(const std::string& s);
+    std::string getFileName();
 };
 
 

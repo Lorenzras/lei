@@ -10,32 +10,36 @@
 std::string defaultPath = "Results\\";
 std::string filename = "aa.jpeg";
 
-void process(std::string const &origPath){
-    filename = origPath;
-    //std::cout << origPath;
-    lenz ras(origPath, defaultPath);
 
-    ras.saveImg(defaultPath + "orig_" + filename, ras.getOrig() );
+
+void process(std::string const &origPath){
+
+    //std::cout << origPath;
+
+    lenz ras(origPath, defaultPath);
+    filename = ras.getFileName();
+
+    //ras.saveImg(defaultPath + "orig_" + filename, ras.getOrig() );
     std::cout << defaultPath + "orig_" + filename << "\n";
 
 
 /// Grayscale
     ras.setGray(ras.getOrig());
-    ras.saveImg(defaultPath + "gray_" + filename, ras.getGray() );
+    //ras.saveImg(defaultPath + "gray_" + filename, ras.getGray() );
 
 /// Binary
     ras.setBinary(ras.getGray());
-    ras.saveImg(defaultPath + "bin_" + filename, ras.getBinary() );
+    //ras.saveImg(defaultPath + "bin_" + filename, ras.getBinary() );
 
 
 /// Morph
     ras.setMorph(ras.getBinary());
-    ras.saveImg(defaultPath + "morph_" + filename, ras.getMorph() );
+    //ras.saveImg(defaultPath + "morph_" + filename, ras.getMorph() );
 
 
 /// Segmentation
     ras.setSegment(ras.getMorph());
-    ras.saveImg(defaultPath + "seg_" + filename, ras.getSegment() );
+    //ras.saveImg(defaultPath + "seg_" + filename, ras.getSegment() );
 
 /// Skeletonization
     ras.setSkeleton(ras.getSegment());
@@ -43,15 +47,18 @@ void process(std::string const &origPath){
 
 /// Identify endpoints
     ras.setEndPoints(ras.getSkeleton());
-    ras.saveImg(defaultPath + "end_" + filename, ras.getEndPointsImage() );
+    //ras.saveImg(defaultPath + "end_" + filename, ras.getEndPointsImage() );
 
 
 /// Classify line end
-    ras.setClassifyLineEnds(ras.getBinaryRaw(), ras.getEndPoints() );
-    ras.saveImg(defaultPath + "class_" + filename, ras.getClassifiedEnds() );
+    ras.setClassifyLineEnds(ras.getEndPoints() );
+    //ras.saveImg(defaultPath + "binraw_" + filename, ras.getBinaryRaw() );
+    //ras.saveImg(defaultPath + "bin_" + filename, ras.getBinary() );
 
-    std::cout << std::endl << "Done. Press any key to continue...";
-    getchar();
+    ras.saveImg(defaultPath + "result_" + filename, ras.getClassifiedEnds() );
+
+    //std::cout << std::endl << "Done. Press any key to continue...";
+    //getchar();
 
 
 
@@ -76,3 +83,4 @@ int main( int argc, char** argv )
   return 0;
 
 }
+

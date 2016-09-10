@@ -4,7 +4,6 @@
 #include "zhangsuen.h"
 
 
-
 lenz::lenz(std::string const &source, std::string const &result){
     setOrig(source, result);
 }
@@ -14,11 +13,17 @@ void lenz::setLineEndTypeThresh(long const &num){
 }
 void lenz::setOrig(std::string const &source, std::string const &result)
 {
+
+    setFileName(source);
     std::cout << "Image path is: " << source << std::endl;
+    std::cout << "Filename is: " << getFileName() << std::endl;
 
     imgOrig = imread(source, CV_LOAD_IMAGE_COLOR);
 
-    //cv::resize(imgOrig, imgOrig, cv::Size(), 0.30, 0.30);
+
+
+    cv::resize(imgOrig, imgOrig, cv::Size(), resizeAt, resizeAt);
+
 }
 Mat lenz::getOrig(){
     return imgOrig;
@@ -26,26 +31,33 @@ Mat lenz::getOrig(){
 
 /// grayscale
 void lenz::setGray(Mat const &img){
-    imgGray = img.clone();\
+
+    imgGray = img.clone();
+
     std::cout << "Converting to grayscale..." << std::endl;
     cvtColor(imgGray, imgGray, COLOR_RGB2GRAY);
+    //GaussianBlur( imgGray, imgGray, Size( 3, 3 ), 0, 0 );
+    imgGray = filter(imgGray, 6);
 }
+
 Mat lenz::getGray(){
     return imgGray;
 }
 
+Mat lenz::filter(Mat const &img, float kernel_length){
+    Mat dst;
+    dst.create(imgGray.size(), CV_8U);
+    bilateralFilter(imgGray, dst, kernel_length, kernel_length*2, kernel_length*2);
+    return dst.clone();
+}
+
 ///Binary
 void lenz::setBinary(Mat const &img){
-    imgBinaryRaw = img.clone();
-    imgBinary = img.clone();
-    std::cout << "Generating binary image (Otsu Method)..." << std::endl;
-    threshold(imgBinaryRaw, imgBinaryRaw, 0, 255, CV_THRESH_BINARY_INV | CV_THRESH_OTSU);
-    std::cout << "Generating binary image (Adaptive threshold)..." << std::endl;
-    adaptiveThreshold(imgBinary, imgBinary, 255, ADAPTIVE_THRESH_GAUSSIAN_C, CV_THRESH_BINARY_INV, 15, 7);
-    //imwrite("C:\\Users\\jherenz\\OneDrive\\Thesis\\Project\\lei\\bin\\Debug\\Results\\test.jpg", res);
-    //imgBinary.copyTo(res);
-    //adaptiveThreshold(image, image,255,ADAPTIVE_THRESH_GAUSSIAN_C, CV_THRESH_BINARY,15,-5);
-    //ADAPTIVE_THRESH_GAUSSIAN_C, CV_THRESH_BINARY,15,-5
+    //imgBinaryRaw = img.clone();
+    imgBinary = img.clone();;
+    std::cout << "Generating local adaptive threshold..." << std::endl;
+    adaptiveThreshold(imgBinary, imgBinary, 255, ADAPTIVE_THRESH_MEAN_C, CV_THRESH_BINARY_INV, 11, 7);
+    //imwrite("Results\\thresss_" + fileName, imgBinary);
 }
 Mat lenz::getBinary(){
     return imgBinary;
@@ -64,15 +76,18 @@ Mat lenz::getBinaryInv(Mat const &img){
 /// Morph
 void lenz::setMorph(Mat const &img){
     int morph_size = 2;
+
     imgMorph = img.clone();
 
-    cv::Mat const structure_elem = cv::getStructuringElement(
+
+
+    cv::Mat structure_elem = cv::getStructuringElement(
                  2, cv::Size(morph_size, morph_size));
-    dilate( imgMorph, imgMorph, structure_elem );
-    cv::morphologyEx(imgMorph, imgMorph,
-            cv::MORPH_CLOSE, structure_elem);
-    cv::morphologyEx(imgMorph, imgMorph,
-            cv::MORPH_OPEN, structure_elem);
+
+    //erode(imgMorph, imgMorph, structure_elem);
+    dilate( imgMorph, imgMorph, structure_elem);
+    cv::morphologyEx(imgMorph, imgMorph, cv::MORPH_CLOSE, structure_elem);
+    cv::morphologyEx(imgMorph, imgMorph, cv::MORPH_OPEN, structure_elem);
 }
 Mat lenz::getMorph(){
     return imgMorph;
@@ -84,7 +99,7 @@ void lenz::setSegment(Mat const &img){
     Mat drawing;
     vector< vector <cv::Point> > contours;
     vector<Vec4i> heirachy;
-    long area = 0, noise = 100;
+    long area = 0;
 
     cv::findContours(img, contours, heirachy, RETR_CCOMP, CV_CHAIN_APPROX_TC89_KCOS, cv::Point(0, 0));
     drawing = Mat::zeros(img.size(), CV_8UC3);
@@ -93,10 +108,12 @@ void lenz::setSegment(Mat const &img){
         if (area > noise) {
 			if(heirachy[idx][3] == -1)
                 cv::drawContours(drawing, contours, idx, cv::Scalar(255, 255, 255), CV_FILLED, 8, heirachy);
+                std::cout << "Found line: " << area << std::endl;
         }else{
-            std::cout << "Size of removed noise: " << area << std::endl;
+            //if(area!=0) std::cout << "Size of removed noise: " << area << std::endl;
         }
     }
+
     imgSegment = drawing.clone();
 }
 Mat lenz::getSegment(){
@@ -110,8 +127,14 @@ void lenz::setSkeleton(Mat const &img){
     imgSkeleton = getBinaryInv(imgSkeleton);
     //thinning(imgSkeleton);
     thin(imgSkeleton, true, true, true);
+
+
+
     imgSkeleton = getBinaryInv(imgSkeleton);
     cv::findNonZero(imgSkeleton, skelPoints);
+
+
+
 }
 Mat lenz::getSkeleton(){
     return imgSkeleton;
@@ -209,7 +232,7 @@ Rect lenz::squareAroundCentroid(cv::Point p, int size, int width, int height) {
 
 
 Mat lenz::getCircleROI(Mat const &img, cv::Point const &p){
-    int radius = 20;
+
     //get the Rect containing the circle:
 
     //Rect r(cen.x-radius, cen.y-radius, radius*2,radius*2);
@@ -218,6 +241,8 @@ Mat lenz::getCircleROI(Mat const &img, cv::Point const &p){
 
     // obtain the image ROI:
     Mat roi(img, r);
+
+    threshold(roi, roi, 200, 255, CV_THRESH_BINARY_INV);
 
     // make a black mask, same size:
     Mat mask(roi.size(), roi.type(), Scalar::all(0));
@@ -231,8 +256,11 @@ Mat lenz::getCircleROI(Mat const &img, cv::Point const &p){
     return circle_roi;
 }
 
-void lenz::setClassifyLineEnds(Mat const &img, std::vector< cv::Point > const &p){
-    Mat res = img.clone();
+void lenz::setClassifyLineEnds(std::vector< cv::Point > const &p){
+    Mat res = filter(imgGray,11);
+
+    //blur( imgGray, res, Size( 3, 3 ) ); //filter(imgGray,11);
+
     Mat croppedImage;
     Rect ROI;
     cv::Point center;
@@ -245,14 +273,17 @@ void lenz::setClassifyLineEnds(Mat const &img, std::vector< cv::Point > const &p
 
         //ROI = squareAroundCentroid(center, 20, res.cols-1, res.rows-1);
         //croppedImage = res(ROI);
+
         croppedImage = getCircleROI(res, center);
 
+
+        //imwrite("Results\\"   + to_string(i) + "_circroi_" + fileName, croppedImage);
         imgEndAreas.push_back(croppedImage);
         //if(cv::countNonZero(croppedImage) > lineEndTypeThresh) {
         ROIarea = cv::countNonZero(croppedImage);
 
         std::cout << "Area of index " << to_string(i) <<" at point (" << p[i].x << ", " << p[i].y << ") is : " << ROIarea << std::endl;
-
+        std::cout << "Crisp Threshold is " << lineEndTypeThresh <<std::endl;
         circle(
                imgClassifiedEnds,
                center,
@@ -266,16 +297,13 @@ void lenz::setClassifyLineEnds(Mat const &img, std::vector< cv::Point > const &p
 
         //std::cout << path ;
 
-        //imwrite(defaultPath   + to_string(i) + "_circroi_" + filename, getCircleROI(res, center));
+
     }
 }
+
 Mat lenz::getClassifiedEnds(){
     return imgClassifiedEnds;
 }
-
-
-
-
 
 void lenz::saveImg(std::string const &path, Mat const &img){
 
@@ -287,3 +315,20 @@ std::string lenz::to_string(long const &n){
     ss << n;
     return ss.str();
 }
+
+
+void lenz::setFileName(const std::string& s) {
+
+   char sep = '/';
+#ifdef _WIN32
+   sep = '\\';
+#endif
+    std::cout << "Passed path:" << s << std::endl;
+    size_t i = s.rfind(sep, s.length());
+    if (i != std::string::npos) {
+        fileName = (s.substr(i+1, s.length() - i));
+   }else{
+    fileName = s;
+    }
+}
+std::string lenz::getFileName(){return fileName;}

@@ -8,7 +8,7 @@
 //using namespace cv;
 //std::string defaultPath = "C:\\Users\\jherenz\\OneDrive\\Thesis\\Project\\lei\\bin\\Debug\\Results\\";
 std::string defaultPath = "Results\\";
-std::string filename = "aa.jpeg";
+std::string filename = "";
 
 
 
@@ -19,7 +19,6 @@ void process(std::string const &origPath){
     lenz ras(origPath, defaultPath);
     filename = ras.getFileName();
 
-    //ras.saveImg(defaultPath + "orig_" + filename, ras.getOrig() );
     std::cout << defaultPath + "orig_" + filename << "\n";
 
 
@@ -43,7 +42,7 @@ void process(std::string const &origPath){
 
 /// Skeletonization
     ras.setSkeleton(ras.getSegment());
-    ras.saveImg(defaultPath + "thin_" + filename, ras.getSkeleton() );
+    //ras.saveImg(defaultPath + "thin_" + filename, ras.getSkeleton() );
 
 /// Identify endpoints
     ras.setEndPoints(ras.getSkeleton());
@@ -59,8 +58,6 @@ void process(std::string const &origPath){
 
     //std::cout << std::endl << "Done. Press any key to continue...";
     //getchar();
-
-
 
 }
 

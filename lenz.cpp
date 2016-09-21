@@ -57,7 +57,7 @@ void lenz::setBinary(Mat const &img){
     imgBinary = img.clone();;
     std::cout << "Generating local adaptive threshold..." << std::endl;
     adaptiveThreshold(imgBinary, imgBinary, 255, ADAPTIVE_THRESH_MEAN_C, CV_THRESH_BINARY_INV, 11, 7);
-    //imwrite("Results\\thresss_" + fileName, imgBinary);
+
 }
 Mat lenz::getBinary(){
     return imgBinary;
@@ -99,7 +99,7 @@ void lenz::setSegment(Mat const &img){
     Mat drawing;
     vector< vector <cv::Point> > contours;
     vector<Vec4i> heirachy;
-    long area = 0;
+    size_t area = 0;
 
     cv::findContours(img, contours, heirachy, RETR_CCOMP, CV_CHAIN_APPROX_TC89_KCOS, cv::Point(0, 0));
     drawing = Mat::zeros(img.size(), CV_8UC3);
@@ -264,7 +264,7 @@ void lenz::setClassifyLineEnds(std::vector< cv::Point > const &p){
     Mat croppedImage;
     Rect ROI;
     cv::Point center;
-    long ROIarea;
+    size_t ROIarea;
     imgClassifiedEnds = imgOrig.clone();
 
     //threshold(res, res, 0, 255, CV_THRESH_BINARY_INV);

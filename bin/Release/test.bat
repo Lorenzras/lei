@@ -1,3 +1,2 @@
-lei aa.jpeg
-
+lei hiragana_o.jpg
 pause

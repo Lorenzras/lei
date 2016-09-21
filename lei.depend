@@ -348,11 +348,11 @@
 1472911124 source:g:\thesis\c++\codeblocks\projects\lei\zhangsuen.cpp
 	"zhangsuen.h"
 
-1473534696 source:g:\thesis\c++\projects\lei\lenz.cpp
+1474419906 source:g:\thesis\c++\projects\lei\lenz.cpp
 	"lenz.h"
 	"zhangsuen.h"
 
-1473533314 g:\thesis\c++\projects\lei\lenz.h
+1474189196 g:\thesis\c++\projects\lei\lenz.h
 	<opencv2/core/core.hpp>
 	"opencv2/imgproc/imgproc.hpp"
 	<opencv2/highgui/highgui.hpp>
@@ -370,14 +370,14 @@
 	"opencv2/highgui/highgui.hpp"
 	"opencv2/imgproc/imgproc.hpp"
 
-1473534694 source:g:\thesis\c++\projects\lei\main.cpp
+1474419992 source:g:\thesis\c++\projects\lei\main.cpp
 	"lenz.h"
 	<stdlib.h>
 	<stdio.h>
 	<iostream>
 	<string>
 
-1472911124 source:g:\thesis\c++\projects\lei\zhangsuen.cpp
+1474419352 source:g:\thesis\c++\projects\lei\zhangsuen.cpp
 	"zhangsuen.h"
 
 1449835038 g:\thesis\c++\codeblocks\opencv\build\include\opencv2\core\core.hpp

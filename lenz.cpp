@@ -189,8 +189,8 @@ std::vector<cv::Point> lenz::getEndPoints(){
 void putString(Mat &img, std::string const &s, cv::Point const &p){
     String text = s;
     int fontFace = FONT_HERSHEY_SCRIPT_SIMPLEX;
-    double fontScale = 1;
-    int thickness = 3;
+    double fontScale = 0.5;
+    int thickness = 1;
     cv::Point textOrg = p;
     //Mat img(600, 800, CV_8UC3, Scalar::all(0));
 
@@ -200,7 +200,7 @@ void putString(Mat &img, std::string const &s, cv::Point const &p){
 
 
     putText(img, text, textOrg, fontFace, fontScale,
-            Scalar::all(128), thickness, 8);
+            Scalar::all(0), thickness, 8);
 }
 
 Rect lenz::squareAroundCentroid(cv::Point p, int size, int width, int height) {
@@ -289,7 +289,7 @@ void lenz::setClassifyLineEnds(std::vector< cv::Point > const &p){
                center,
                10.0,
                (ROIarea >= lineEndTypeThresh) ? Scalar(0, 0, 255) :  Scalar(0, 255, 0),
-               1,
+               2,
                8);
         //}
         //endAreas.push_back (cv::countNonZero(croppedImage));
@@ -300,9 +300,14 @@ void lenz::setClassifyLineEnds(std::vector< cv::Point > const &p){
 
     }
 }
-
 Mat lenz::getClassifiedEnds(){
     return imgClassifiedEnds;
+}
+size_t lenz::getNarrowCount(){
+    return classResults[0];
+}
+size_t lenz::getNotNarrowCount(){
+    return classResults[1];
 }
 
 void lenz::saveImg(std::string const &path, Mat const &img){

@@ -13,12 +13,13 @@ using namespace cv;
 
 namespace cv{using std::vector;}
 
+
 class lenz
 {
 private:
     ///settings
     size_t lineEndTypeThresh = 22; //crisp value to classify line; Higher than or equal this value is not narrow.
-    size_t cornerIgnoreThresh = 70;   //threshold to ignore corners
+    size_t cornerIgnoreThresh = 71;   //threshold to ignore corners
            //resize for testing;
     size_t radius = 20;               //radius of ROI
     size_t noise = 100;               //max noise size
@@ -39,7 +40,7 @@ private:
 
     long endPointsCount;
 
-    std::vector< size_t > classResults {0, 0}; //stores general result of narrow and not narrow counts
+    std::vector< size_t > classResults {0, 0}; //[0] narrow. [1] not narrow
     std::vector< Mat > imgEndAreas;
     std::vector< cv::Point > skelPoints;
 	std::vector< cv::Point > endPoints;
@@ -90,6 +91,7 @@ public:
     size_t getNarrowCount();
     size_t getNotNarrowCount();
     long getPointsCount();
+
     void saveImg(std::string const &path, Mat const &img);
     void setFileName(const std::string& s);
     std::string getFileName();

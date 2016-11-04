@@ -24,29 +24,29 @@ void process(std::string const &origPath){
 
 /// Grayscale
     ras.setGray(ras.getOrig());
-    //ras.saveImg(defaultPath + "gray_" + filename, ras.getGray() );
+    ras.saveImg(defaultPath + "gray_" + filename, ras.getGray() );
 
 /// Binary
     ras.setBinary(ras.getGray());
-    //ras.saveImg(defaultPath + "bin_" + filename, ras.getBinary() );
+    ras.saveImg(defaultPath + "bin_" + filename, ras.getBinary() );
 
 
 /// Morph
     ras.setMorph(ras.getBinary());
-    //ras.saveImg(defaultPath + "morph_" + filename, ras.getMorph() );
+    ras.saveImg(defaultPath + "morph_" + filename, ras.getMorph() );
 
 
 /// Segmentation
     ras.setSegment(ras.getMorph());
-    //ras.saveImg(defaultPath + "seg_" + filename, ras.getSegment() );
+    ras.saveImg(defaultPath + "seg_" + filename, ras.getSegment() );
 
 /// Skeletonization
     ras.setSkeleton(ras.getSegment());
-    //ras.saveImg(defaultPath + "thin_" + filename, ras.getSkeleton() );
+    ras.saveImg(defaultPath + "thin_" + filename, ras.getSkeleton() );
 
 /// Identify endpoints
     ras.setEndPoints(ras.getSkeleton());
-    //ras.saveImg(defaultPath + "end_" + filename, ras.getEndPointsImage() );
+    ras.saveImg(defaultPath + "end_" + filename, ras.getEndPointsImage() );
 
 
 /// Classify line end
